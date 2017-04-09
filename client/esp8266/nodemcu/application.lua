@@ -19,9 +19,9 @@ s:on("reconnection", function(sck,c) print("reconnection") end)
 s:on("disconnection", function(sck,c) 
     print("disconnection") 
     connected=false
-    sck:connect(5005,"192.168.137.25")
+    sck:connect(5005,"192.168.2.20")
   end)
 
 --s:on("sent", function(sck,c) print("sent") end)
 
-s:connect(5005,"192.168.137.25")
+s:connect(5005,"192.168.2.20")
