@@ -7,7 +7,7 @@ if __name__== "__main__":
 	args = sys.argv
 	nodemcuLoc="client/esp8266/nodemcu/" #relativna lokacija programa za nodemcu za esp8266
 	paths = os.environ["PATH"].split(os.pathsep) #env. varijabla path
-	paths = paths + os.environ["PYTHONPATH"].split(os.pathsep) #env. varijabla pythonpath
+	#paths = paths + os.environ["PYTHONPATH"].split(os.pathsep) #env. varijabla pythonpath
 	lokacija = None
 
 	if args[1] == "esp":
