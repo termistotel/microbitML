@@ -22,6 +22,7 @@ class servThread (threading.Thread):
 	#funkcija koja se pokrece s .start() metodom
 	def run(self):
 		print("Pokrecem server na adresi: "+str(self.adresa[0])+":"+str(self.adresa[1]))
+		self.thrRunning = True
 		self.socket.bind(self.adresa)
 		self.funkcija(self)
 		self.socket.close()

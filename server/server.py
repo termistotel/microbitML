@@ -15,7 +15,7 @@ BUFFER_SIZE = 32
 def zapisi(file,data):
 	put = os.path.realpath(os.path.dirname(__file__))
         with open(os.path.join(put,file),'a') as f:
-	        f.write(data)
+	        f.write(data+"\n")
 	return True
 
 
