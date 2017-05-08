@@ -1,28 +1,56 @@
+import numpy as np
+import os
 import socket
+from select import select
 from ast import literal_eval
 
+os.environ["PYTHONDONTWRITEBYTECODE"]="True"
 
-TCP_IP = '192.168.2.20'
+import servThread
+
+TCP_IP = 'localhost'
 TCP_PORT = 5005
-BUFFER_SIZE = 20  # Normally 1024, but we want fast response
+BUFFER_SIZE = 32
 
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-s.bind((TCP_IP, TCP_PORT))
-s.listen(1)
+def zapisi(file,data):
+	put = os.path.realpath(os.path.dirname(__file__))
+        with open(os.path.join(put,file),'a') as f:
+	        f.write(data)
+	return True
 
-print "Starting... "+TCP_IP+" "+str(TCP_PORT)
 
-conn, addr = s.accept()
-print 'Connection address:', addr
+def podaciSaMicrobita(server):
+	server.socket.listen(1)
+	print("Cekam konekciju 20 sekundi")
+	i,_,_ = select([server.socket],[],[],20)
 
-while True:
-	try:
-		data = literal_eval(conn.recv(BUFFER_SIZE))
-		print "received data:", data
-	except ValueError:
-		print "krivo"
-	conn.send("etoga")
+	if i:
+		conn, addr = server.socket.accept()
+		print("Konekcija s adrese: "+str(addr))
 
-conn.close()
-s.close()
+		while server.thrRunning:
+			j,_,_ = select([server.socket],[],[],1)
+			if (j):
+				data = conn.recv(BUFFER_SIZE)
+				zapisi('podaci',data)
+				#f = open('podaci','a')
+				#f.write(data)
+				#f.close()
+	else:
+		print("Nema konekcije.")
+		return
+
+
+
+server = servThread.servThread((TCP_IP,TCP_PORT),podaciSaMicrobita)
+server.start()
+
+inp=""
+
+while inp!="quit":
+	inp= raw_input("Upisi quit za ugasiti\n")
+
+print("RIP server")
+
+server.thrRunning=False
+server.join()
