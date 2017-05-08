@@ -8,7 +8,7 @@ os.environ["PYTHONDONTWRITEBYTECODE"]="True"
 
 import servThread
 
-TCP_IP = 'localhost'
+TCP_IP = raw_input("Unesi IP adresu")
 TCP_PORT = 5005
 BUFFER_SIZE = 32
 
