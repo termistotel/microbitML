@@ -29,13 +29,15 @@ def podaciSaMicrobita(server):
 		print("Konekcija s adrese: "+str(addr))
 
 		while server.thrRunning:
-			j,_,_ = select([server.socket],[],[],1)
+			j,_,_ = select([conn],[],[],1)
 			if (j):
 				data = conn.recv(BUFFER_SIZE)
 				zapisi('podaci',data)
 				#f = open('podaci','a')
 				#f.write(data)
 				#f.close()
+		conn.close()
+		
 	else:
 		print("Nema konekcije.")
 		return
