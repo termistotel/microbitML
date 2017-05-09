@@ -33,9 +33,6 @@ def podaciSaMicrobita(server):
 			if (j):
 				data = conn.recv(BUFFER_SIZE)
 				zapisi('podaci',data)
-				#f = open('podaci','a')
-				#f.write(data)
-				#f.close()
 		conn.close()
 		
 	else:
