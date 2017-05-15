@@ -9,7 +9,7 @@ os.environ["PYTHONDONTWRITEBYTECODE"]="True"
 import servThread
 
 #TCP_IP = raw_input("Unesi IP adresu")
-TCP_IP = "192.168.2.102"
+TCP_IP = "192.168.137.57"
 TCP_PORT = 5005
 BUFFER_SIZE = 32
 
