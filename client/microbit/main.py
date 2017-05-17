@@ -9,7 +9,8 @@ while True:
     y = "0"
     if pin16.read_digital():
     	y="1"
-    #uart.write(str(tmp)+"\t"+y+"\r")
+
     r2 = tmp[0]**2 + tmp[1]**2 + tmp[2]**2 
+
     uart.write(str(tmp[0])+"\t"+str(tmp[1])+"\t"+str(tmp[2])+"\t"+ str(r2) + "\t" + y+"\n\r")
     sleep(25)
