@@ -1,28 +1,27 @@
-s=net. createConnection(net.TCP,0)
+sok=net. createConnection(net.TCP,0)
 
 
 
---s:on("sent", function(sck,c) print("sent") end)
---
---s:on("connection", function(sck,c) 
---    print("connection") 
+--sok:on("sent", function(sck,c) print("sent") end)
+--sok:on("connection", function(sck,c) 
+--    --print("connection") 
 --    a,b,c,d = uart.getconfig(0)
 --    s:send(a.." "..b.." "..c.." "..d)
 --  end)
+
+sok:on("receive", function(sck,c) uart.write(0,c.."\n\r") end)
+
+--sok:on("reconnection", function(sck,c) print("reconnection") end)
 --
-s:on("receive", function(sck,c) uart.write(0,c.."\r\n") end)
---
---s:on("reconnection", function(sck,c) print("reconnection") end)
---
---s:on("disconnection", function(sck,c) 
+--sok:on("disconnection", function(sck,c) 
 --    print("disconnection")
 --    sck:connect(5005,"192.168.2.20")
 --  end)
 --
---s:on("sent", function(sck,c) print("sent") end)
+--sok:on("sent", function(sck,c) print("sent") end)
 
 function funkcija(data)
-  s:send(string.sub(data,1,-2))
+  sok:send(string.sub(data,1,-2))
 end
 
 --prvi nesmije poslat jer prvi podatak može biti cudan
@@ -32,4 +31,4 @@ end
 
 uart.on("data", "\r", funkcija1,0)
 
-s:connect(5005,"192.168.137.57")
+sok:connect(5005,"192.168.2.102")

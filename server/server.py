@@ -6,44 +6,54 @@ from ast import literal_eval
 
 os.environ["PYTHONDONTWRITEBYTECODE"]="True"
 
-import servThread
+from servThread import servThread
 
 #TCP_IP = raw_input("Unesi IP adresu")
 TCP_IP = "192.168.2.102"
 TCP_PORT = 5005
 BUFFER_SIZE = 32
 
-def zapisi(file,data):
-	put = os.path.realpath(os.path.dirname(__file__))
-        with open(os.path.join(put,file),'a') as f:
-	        f.write(data)
+def blank():
+	pass
+
+def cekajResurs(res,timeout,funkcija1,funkcija2=blank)
+	j,_,_ = select([res],[],[],timeout)
+	if j:
+		return funkcija1(res)
+	else:
+		return funkcija2(res)
+
+def markovaFunkcija(conn):
+	data = conn.recv(BUFFER_SIZE)
+	print(data)
+
+__
+def nesto1(socket):
+	conn, addr = socket.accept()
+		print("Konekcija s adrese: "+str(addr))
+
+		while server.thrRunning:
+			#cekajResurs(conn,1, markovaFunkcija)
+			conn.send("didaktika")
+
+		conn.close()
+
 	return True
+
+
+def nesto2(socket):
+	print("Nema konekcije.")
+	return False
 
 
 def podaciSaMicrobita(server):
 	server.socket.listen(1)
 	print("Cekam konekciju 30 sekundi")
-	i,_,_ = select([server.socket],[],[],30)
-
-	if i:
-		conn, addr = server.socket.accept()
-		print("Konekcija s adrese: "+str(addr))
-
-		while server.thrRunning:
-			j,_,_ = select([conn],[],[],1)
-			if (j):
-				data = conn.recv(BUFFER_SIZE)
-				print(data)
-				zapisi('podaci',data)
-		conn.close()
-		
-	else:
-		print("Nema konekcije.")
-		return
+	cekajResurs(server.socket,30,nesto1,nesto2)
 
 
 
-server = servThread.servThread((TCP_IP,TCP_PORT),podaciSaMicrobita)
+server = servThread((TCP_IP,TCP_PORT),podaciSaMicrobita)
 server.start()
 
 
