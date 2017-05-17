@@ -8,33 +8,38 @@ os.environ["PYTHONDONTWRITEBYTECODE"]="True"
 
 import servThread
 
-#TCP_IP = raw_input("Unesi IP adresu")
-TCP_IP = "192.168.2.102"
-TCP_PORT = 5005
 BUFFER_SIZE = 32
 
+#funkcija koja vraca true ako je resurs iskoristen, a false ako je proslo odredeno vrijeme
+def resBusy(res,timeout):
+	i,_,_ = select([res],[],[],timeout)
+	return i
+	
+#funkcija koja zapisuje podatak u datoteku
 def zapisi(file,data):
 	put = os.path.realpath(os.path.dirname(__file__))
         with open(os.path.join(put,file),'a') as f:
 	        f.write(data)
 	return True
 
-
+#funkcija koju server izvrsava dok je upaljen
 def podaciSaMicrobita(server):
 	server.socket.listen(1)
-	print("Cekam konekciju 30 sekundi")
-	i,_,_ = select([server.socket],[],[],30)
+	print("Cekam konekciju 50 sekundi")
+	uspjeh = resBusy(server.socket,50)
 
-	if i:
+	if uspjeh:
 		conn, addr = server.socket.accept()
 		print("Konekcija s adrese: "+str(addr))
 
 		while server.thrRunning:
-			j,_,_ = select([conn],[],[],1)
-			if (j):
+			uspjeh2 = resBusy(conn,1)
+
+			if uspjeh2:
 				data = conn.recv(BUFFER_SIZE)
 				print(data)
 				zapisi('podaci',data)
+
 		conn.close()
 		
 	else:
@@ -43,10 +48,11 @@ def podaciSaMicrobita(server):
 
 
 
+TCP_IP = raw_input("Unesi IP adresu")
+TCP_PORT = 5005
+
 server = servThread.servThread((TCP_IP,TCP_PORT),podaciSaMicrobita)
 server.start()
-
-
 
 inp=""
 while inp!="quit":
