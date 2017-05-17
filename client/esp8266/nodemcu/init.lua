@@ -12,6 +12,7 @@ end
 print("Connecting to WiFi access point...")
 wifi.setmode(wifi.STATION)
 wifi.sta.config("sajeta", "sajeta10")
+
 --wifi.sta.connect() -- not necessary because config() uses auto-connect=true by default
 tmr.alarm(1, 1000, 1, function()
     if wifi.sta.getip() == nil then

@@ -15,7 +15,7 @@ BUFFER_SIZE = 32
 uzastopni = 41
 
 alfa = 1
-mi = 0.00001
+mi = 0.001
 nfeatures = 4
 
 #funkcija koja pokusava predvidjeti y
@@ -36,7 +36,10 @@ def nauci(X,y,theta0):
 	while(True):
 		oldTheta = theta;
 		theta = theta - alfa*X.T.dot(y-h(theta,X))/M
-		if( norm(theta - oldTheta) < mi ):
+		razlika = norm(theta - oldTheta)
+		print(razlika)
+
+		if( razlika < mi ):
 			break
 	return theta
 
@@ -89,14 +92,13 @@ def oblikujPodatke(X,y,uzastopni):
 	#Dodajemo negativnu klasu y = 0, dodajemo isti broj mjerenja koji imamo za pozitivnu klasu
 	for i in range(broj):
 		#Za negativnu klasu uzimamo nasumicno odabrana mjerenja iz preostalih
-		centralniIndeks = randint(uzastopni//2,len(X)-uzastopni//2)
+		centralniIndeks = randint(uzastopni//2,len(X)-uzastopni//2 - 2)
 		indeksi=np.array(range(uzastopni))-uzastopni//2 + centralniIndeks
 
 		odabrani = X[indeksi,:].ravel()
 		mjerenje = np.append([1],odabrani)
 		X1 = np.append(X1,[mjerenje],axis=0)
 		y1 = np.append(y1,[0])
-		j+=1
 	
 	return X1,y1
 
@@ -114,32 +116,27 @@ def provjeravaj(server):
 		conn, addr = server.socket.accept()
 		print("Konekcija s adrese: "+str(addr))
 
+		#u akumulator spremamo vise mjerenja koja cemo pretvoriti u jedno
+		akumulator = np.zeros(shape=(uzastopni,nfeatures))
+
 		while server.thrRunning:
-			#u akumulator spremamo vise mjerenja koja cemo pretvoriti u jedno
-			akumulator = np.array([])
 
-			for i in range(uzastopni):
-
-				#Provjerava jesu podatci poslani preko konekcije i treba li u meduvremenu ugasiti server
-				uspjeh2 = False
-				while not uspjeh2:
-					uspjeh2 = resBusy(conn,1)
-
-					#prekida funkciju ako zelimo ugasiti server
-					if not server.thrRunning:
-						conn.close()
-						return
-
-				#Uzimamo samo prva 3 stupca u poslanim podatcima jer je zadnji stupac y, sto nam tu netreba
+			#Provjerava jesu podatci poslani preko konekcije i treba li u meduvremenu ugasiti server
+			uspjeh2 = resBusy(conn,1)
+			if uspjeh2:
+				#Uzimamo samo prva 4 stupca u poslanim podatcima jer je zadnji stupac y, sto nam tu netreba
 				data = np.fromstring(conn.recv(BUFFER_SIZE),sep='\t')
-				akumulator=np.append(akumulator,data[0:3])
-	
-			#Pretvaramo vise mjerenja u jedno i dodajemo x0 na pocetak
-			praviData = akumulator.ravel()
-			praviData = np.append([1],akumulator.ravel())
-			praviData = skaliraj(praviData,mean,sigma)
+				akumulator=np.append(akumulator,[data[0:nfeatures]],axis=0)
+				akumulator=np.delete(akumulator,[0],axis=0)
 
-			print(h(theta, praviData))
+				#Pretvaramo vise mjerenja u jedno i dodajemo x0 na pocetak
+				praviData = akumulator.ravel()
+				praviData = np.append([1],praviData)
+				praviData = skaliraj(praviData,mean,sigma)
+
+				predvidanje = h(theta, praviData)
+				if predvidanje > 0.5:
+					print("Pozitivno: "+ str(predvidanje))
 
 		conn.close()
 		
