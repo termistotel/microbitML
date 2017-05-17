@@ -13,56 +13,51 @@ TCP_IP = "192.168.2.102"
 TCP_PORT = 5005
 BUFFER_SIZE = 32
 
-def blank():
-	pass
-
-def cekajResurs(res,timeout,funkcija1,funkcija2=blank)
+def cekajResurs(res,timeout):
 	j,_,_ = select([res],[],[],timeout)
-	if j:
-		return funkcija1(res)
-	else:
-		return funkcija2(res)
+	return j
 
 def markovaFunkcija(conn):
 	data = conn.recv(BUFFER_SIZE)
 	print(data)
 
-__
 def nesto1(socket):
 	conn, addr = socket.accept()
-		print("Konekcija s adrese: "+str(addr))
+	print("Konekcija s adrese: "+str(addr))
 
-		while server.thrRunning:
-			#cekajResurs(conn,1, markovaFunkcija)
-			conn.send("didaktika")
+	while server.thrRunning:
+		uspjeh = cekajResurs(conn,1)
+		if uspjeh:
+			conn.send(raw_input("Sto da posaljem? "))
 
-		conn.close()
+	conn.close()
 
 	return True
 
-
-def nesto2(socket):
-	print("Nema konekcije.")
-	return False
 
 
 def podaciSaMicrobita(server):
 	server.socket.listen(1)
 	print("Cekam konekciju 30 sekundi")
-	cekajResurs(server.socket,30,nesto1,nesto2)
+	uspjeh = cekajResurs(server.socket,30)
+	if uspjeh:
+			conn, addr = server.socket.accept()
+			print("Konekcija s adrese: "+str(addr))
 
+			while server.thrRunning:
+				command = raw_input("Sto da posaljem? ")
+				if command == "quit":
+					server.thrRunning=False
+				else:
+					conn.send(command)
+					print("Cekam odgovor: " + conn.recv(BUFFER_SIZE) + "\n")
+
+			conn.close()
+	else:
+		print("Nema konekcije.")
 
 
 server = servThread((TCP_IP,TCP_PORT),podaciSaMicrobita)
 server.start()
 
-
-
-inp=""
-while inp!="quit":
-	inp= raw_input("Upisi quit za ugasiti\n")
-
-print("RIP server")
-
-server.thrRunning=False
 server.join()
