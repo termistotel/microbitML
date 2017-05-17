@@ -50,9 +50,12 @@ def podaciSaMicrobita(server):
 					server.thrRunning=False
 				else:
 					conn.send(command)
-					print("Cekam odgovor: " + conn.recv(BUFFER_SIZE) + "\n")
+					print("Cekam odgovor: ")
+					odgovor = conn.recv(BUFFER_SIZE)
+					print(odgovor + "\n")
 
 			conn.close()
+			server.socket.close()
 	else:
 		print("Nema konekcije.")
 

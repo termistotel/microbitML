@@ -23,6 +23,7 @@ class servThread (threading.Thread):
 	def run(self):
 		print("Pokrecem server na adresi: "+str(self.adresa[0])+":"+str(self.adresa[1]))
 		self.thrRunning = True
+		self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 		self.socket.bind(self.adresa)
 		self.funkcija(self)
 		self.socket.close()
