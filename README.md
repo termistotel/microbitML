@@ -4,12 +4,19 @@ Sastoji se od dvije komponente:
 
 ### Klijent - micro:bit + ESP8266
 Što klijent trenutno radi:
-1. micro:bit ~~čita podatke sa senzora i šalje ih preko UART-a na ESP8266.~~ Šalje "testinjola\r" preko UART-a 
-2. Zatim se ti podaci šalju preko wifi-a na server.
+1. micro:bit čita podatke sa senzora i šalje ih preko UART-a na ESP8266.
+2. ESP, preko wifi-a šalje na server sve podatke koje primi preko UART-a
 
 
 ### Server
->Server trenutno samo sluša podatke i ispiše što prima.
+Postoje dva programa za server:
+
+server.py
+>Sluša podatke koji dolaze preko mreže na port 5005 i sprema ih u datoteku "podaci"
+
+learn.py
+>Istrenira neuron prema spremljenim podacima i pokrene server koji prima nove podatke.
+>Prema novim podacima predviđa naučeno i ispisuje ako detektira pozitivnu klasu.
 
 
 
@@ -19,7 +26,7 @@ MicroPython kod za micro:bit se nalazi u [client/microbit](client/microbit)
 Za flashanje koristimo [mu editor](https://codewith.mu/)
 
 Kod za ESP8266 se nalazi u [clent/esp8266](client/esp8266)  
-Mogu se koristiti dvije verzije firmwarea: [NodeMCU](https://nodemcu.readthedocs.io/en/master/) i [MicroPython](https://docs.micropython.org/en/latest/esp8266/esp8266/tutorial/intro.html)  
+Mogu se koristiti dvije verzije firmwarea: [NodeMCU](https://nodemcu.readthedocs.io/en/master/) ~~i [MicroPython](https://docs.micropython.org/en/latest/esp8266/esp8266/tutorial/intro.html)~~
 Za uploadavanje file-ova na NodeMCU koristimo [nodemcu-uploader](https://github.com/kmpm/nodemcu-uploader).
 Još nema programa za MicroPython
 
