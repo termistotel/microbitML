@@ -16,8 +16,8 @@ def resBusy(res,timeout):
 	
 #funkcija koja zapisuje podatak u datoteku
 def zapisi(file,data):
-    with open("podaci",'a') as f:
-	        f.write(data)
+	with open("podaci",'a') as f:
+		f.write(data)
 	return True
 
 #funkcija koju server izvrsava dok je upaljen
