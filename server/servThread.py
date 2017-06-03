@@ -21,6 +21,9 @@ class servThread (threading.Thread):
 
 	#funkcija koja se pokrece s .start() metodom
 	def run(self):
+		#Ova linija sluzi da mozemo ponovno koristiti server odmah nakon sto ga ugasimo
+		self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
 		print("Pokrecem server na adresi: "+str(self.adresa[0])+":"+str(self.adresa[1]))
 		self.thrRunning = True
 		self.socket.bind(self.adresa)

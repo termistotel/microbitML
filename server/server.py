@@ -1,12 +1,11 @@
 import numpy as np
+
 import os
-import socket
 from select import select
-from ast import literal_eval
 
 os.environ["PYTHONDONTWRITEBYTECODE"]="True"
 
-import servThread
+from servThread import servThread
 
 BUFFER_SIZE = 32
 
@@ -17,8 +16,7 @@ def resBusy(res,timeout):
 	
 #funkcija koja zapisuje podatak u datoteku
 def zapisi(file,data):
-	put = os.path.realpath(os.path.dirname(__file__))
-        with open(os.path.join(put,file),'a') as f:
+    with open("podaci",'a') as f:
 	        f.write(data)
 	return True
 
@@ -48,10 +46,14 @@ def podaciSaMicrobita(server):
 
 
 
-TCP_IP = raw_input("Unesi IP adresu")
+#
+# Pokretanje servera
+#
+
+TCP_IP = raw_input("Unesi IP adresu racunala: ")
 TCP_PORT = 5005
 
-server = servThread.servThread((TCP_IP,TCP_PORT),podaciSaMicrobita)
+server = servThread((TCP_IP,TCP_PORT),podaciSaMicrobita)
 server.start()
 
 inp=""

@@ -1,16 +1,20 @@
-s=net. createConnection(net.TCP,0)
+--Stvaramo socket za TCP komunikaciju
+sok=net. createConnection(net.TCP,0)
 
-s:on("receive", function(sck,c) uart.write(0,c.."\r\n") end)
-
-function funkcija(data)
-  s:send(string.sub(data,1,-2))
+function posaljiPrekoUART(sck,data)
+  uart.write(0,data.."\n\r")
 end
 
---prvi nesmije poslat jer prvi podatak može biti cudan
-function funkcija1(data)
-  uart.on("data", "\r", funkcija,0)
+function posaljiPrekoWiFi(data)
+  sok:send(string.sub(data,1,-1))
 end
 
-uart.on("data", "\r", funkcija1,0)
+--Kada stignu podaci preko UARTa, samo ih posaljemo preko WiFi-a na racunalo
+uart.on("data", "\r", posaljiPrekoWiFi,0)
 
-s:connect(5005,"192.168.137.57")
+--Kada stignu podaci preko WiFia, posalji na UART. Ovo omogucuje dvosmjernu komunikaciju
+sok:on("receive", posaljiPrekoUART)
+
+--IP adresu treba zamijeniti s adresom racunala
+--Port za komunikaciju treba biti isti broj kao i na serveru
+sok:connect(5005,"192.168.2.102")
