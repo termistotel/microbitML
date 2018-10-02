@@ -42,7 +42,10 @@ upload.py esp {micropython|nodemcu}
 
 
 
-
+<div class="paragraph"><p> <br>
+ <br></p></div>
+<div class="paragraph"><p> <br>
+ <br></p></div>
 
 # Detaljnije upute
 Kratak opis
@@ -64,10 +67,8 @@ Da bismo to ostvarili, radimo dvije stvari:
 **Napomena:** predviđeno vrijeme za izradu cijelog projekta je nekoliko
 mjeseci
 
-\centering
-![Uređaj za mjerenje i slanje
-akceleracije[]{label="uredaj"}](Docs/Uredaj.jpg){#uredaj
-width=".5\linewidth"}
+![uredaj](https://raw.githubusercontent.com/termistotel/microbitML/readmeAssets/imgs/Uredaj.jpg)
+Uređaj za mjerenje i slanje akceleracije
 
 Potrebna predznanja
 -------------------
@@ -140,7 +141,7 @@ obzirom da očekujemo dosta veliku razliku između akceleracije prilikom
 trčanja i mirovanja, kao podatke za učenje ćemo mjeriti akceleraciju s
 microbitovim unutarnjim akcelerometrom.\
 Uređaj će slati mjerene podatke na računalo za obradu. Sustav za slanje
-radimo po uzoru na projekt \"Microbit i WiFi modul\" od Marka Jaklina:
+radimo po uzoru na projekt \"Microbit i WiFi modul\":
 Imamo microbit koji mjeri akceleraciju i te podatke šalje preko UART-a
 na wifi modul. Wifi modul će sve što primi automatski proslijediti na
 računalo.
@@ -148,7 +149,7 @@ računalo.
 Programiranje i spajanje micro:bit-a
 ------------------------------------
 
-Program za microbit je u prilogu. Gumb spajamo na pin 16 i 3.3V na
+Gumb spajamo na pin 16 i 3.3V na
 microbitu.\
 Gumb nam služi da pritiskom na njega označimo trčimo li trenutno ili ne.
 Sa y označavamo stanje trčanja, gdje 1 označava da trčimo, a 0 da ne
@@ -160,18 +161,17 @@ komunikacije kod UART-a.
 
 *Flashanje* NodeMCU na ESP8266
 ------------------------------
+<div>
+<img align="left" src="https://raw.githubusercontent.com/termistotel/microbitML/readmeAssets/imgs/normalno.png" width="45%">      
+<img align="right" src="https://raw.githubusercontent.com/termistotel/microbitML/readmeAssets/imgs/flashanje.png" width="45%">
+</div>
+/
 
-\centering
-\centering
-![Shema za normalan način rada s
-microbitom][{label="esp:norm"}](normalno.png){#esp:norm
-width=".5\linewidth"}
+**Lijevo:** Shema za normalan način rada s microbitom/
 
-\centering
-![Spajanje za *flashanje*, odnosno instalaciju NodeMCU sustava. Za
+**Desno:** Spajanje za *flashanje*, odnosno instalaciju NodeMCU sustava. Za
 prebacivanje datoteka na instalirani sustav, **odspojiti pin
-IO-0**[]{label="esp:flash"}](flashanje.png){#esp:flash
-width=".55\linewidth"}
+IO-0**/
 
 Na wifi modul prvo instaliramo NodeMCU sustav[@NodeMCU] koji nam
 omogućava da ga programiramo u programskom jeziku Lua. Za izgradnju
@@ -180,7 +180,7 @@ izgradnju sustava za verziju od 512KB sa modulima: node, net, timer,
 UART i WiFi. Ostavimo naš e-mail i kliknemo \"Start your build\". Nakon
 što je izgradnja gotova, datoteka nam je poslana na e-mail.\
 Prije instaliravanja, moramo spojiti pinove modula prema shemi na
-slici([3](#esp:flash){reference-type="ref" reference="esp:flash"}) te
+slici desno te
 USB-TTL adapter ukopčamo u računalo preko kojeg ćemo instalirati sustav
 na wifi modul. Za instaliranje sustava i stavljanje datoteka na uređaj
 može se koristiti bilo koji alat koji piše u dokumentaciji za
@@ -192,7 +192,7 @@ Programiranje i spajanje ESP8266
 --------------------------------
 
 Nakon uspješne instalacije sustava, uređaj spojimo kao na
-slici([2](#esp:norm){reference-type="ref" reference="esp:norm"}).
+slici lijevo.
 NodeMCU funkcionira tako da čim priključimo napajanje na uređaj, on
 počne izvršavati Lua kod koji je zapisan u init.lua datoteci. U prilogu
 su priložene datoteke *init.lua* i *application.lua*. U init.lua se samo
@@ -238,67 +238,51 @@ akceleracije i iznos akceleracije, dok je zadnji stupac y.
 Osnovna ideja algoritma za učenje
 ---------------------------------
 
-\centering
-![Model neurona. Na ulazu prima podatke mjerenja, a na izlazu daje
-predivđanje $h$ prema koeficijentima $\theta$ koje
-pamti[]{label="fig:neuron"}](neuron.png){#fig:neuron}
+<img src="https://raw.githubusercontent.com/termistotel/microbitML/readmeAssets/imgs/neuron.png">\
+Model neurona. Na ulazu prima podatke mjerenja, a na izlazu daje
+predivđanje h prema koeficijentima θ koje pamti
 
 Kao model našeg algoritma za učenje klasifikacije trčanja koristimo
-jedan neuron kao na slici ([4](#fig:neuron){reference-type="ref"
-reference="fig:neuron"}). Ovaj neuron prima na svom ulazu naše podatke o
-akceleraciji za jedno mjerenje ($x_1, x_2,...$) i na izlazu nam daje
-predviđanje, odnosno broj između 0 i 1 koji ćemo označavati sa $h$.
+jedan neuron kao na slici. Ovaj neuron prima na svom ulazu naše podatke o
+akceleraciji za jedno mjerenje (x1, x2,...) i na izlazu nam daje
+predviđanje, odnosno broj između 0 i 1 koji ćemo označavati sa **h**.
 Potpuna h=0 na izlazu označava da neuron misli da podaci na ulazu ne
 označavaju trčanje, a h=1 na izlazu bi označavao da podaci na ulazu
 označavaju trčanje. Neki broj između 0 i 1 možemo interpretirati kao
 vjerojatnost da je naša trenutna akcija trčanje.\
-Ono što želimo postići je da za većinu mjerenja označenih sa $y =1$,
-neuron na izlazu vrati otprilike $h\approx 1$, a za one označene sa y=0,
-vrati $h\approx 0$.
+Ono što želimo postići je da za većinu mjerenja označenih sa y = 1,
+neuron na izlazu vrati otprilike 1, a za one označene sa y=0,
+vrati oko 0.
 
 Matematika iza modela
 ---------------------
 
 Funkcija koju ćemo fitat na izmjerene podatke zove se logistička
-funkcija:
-$$h(x_1,x_2,x_3,x_4) =  \frac{1}{1+ e^{\theta_0 + \theta_1 x_1 + \theta_2 x_2...}}$$
-Gdje su x-evi naši podaci za jedno mjerenje, a $\theta$ težinski
+funkcija:\
+<img src="https://raw.githubusercontent.com/termistotel/microbitML/readmeAssets/imgs/jednadbe/prva.png">\
+Gdje su x-evi naši podaci za jedno mjerenje, a θ težinski
 parametri koje moramo naučiti.\
-Ako svakom mjerenju ručno unesemo podatak $x_0$ koji definiramo tako da
-je uvijek $x_0 \equiv 1$, onda možemo olakšati notaciju:
-
-$$\vec{x^i} = 
-\begin{bmatrix}
-    x_0 \\
-    x_1 \\
-    x_2 \\
-    x_3 \\
-    x_4
-\end{bmatrix}, \quad \vec{\theta} = 
-\begin{bmatrix}
-    \theta_0 \\
-    \theta_1 \\
-    \theta_2 \\
-    \theta_3 \\
-    \theta_4
-\end{bmatrix}, \quad  h_i =  \frac{1}{1+ e^{\vec{\theta} \cdot \vec{x^i}}}$$
-Gdje je $\vec{x^i}$ vektor s podacima za i-to mjerenje, a $h_i$
+Ako svakom mjerenju ručno unesemo podatak x0 koji definiramo tako da
+je uvijek x0 = 1, onda možemo olakšati notaciju:\
+<img src="https://raw.githubusercontent.com/termistotel/microbitML/readmeAssets/imgs/jednadbe/druga.png">\
+Gdje je **xi** vektor s podacima za i-to mjerenje, a hi
 predviđanje za vrijednost y.
 
 Učenje
 ------
 
 Originalno komplicirani koncept učenja smo uspjeli svesti na traženje
-najpovoljnijih parametra $\vec{\theta}$ koji opisuju naše podatke za
+najpovoljnijih parametra **θ** koji opisuju naše podatke za
 treniranje. Za traženje optimalnih parametara možemo koristiti
-iterativno pravilo za učenje jednog neurona:
-$$\vec{\theta}_{j} = \vec{\theta}_{j-1} - \sum_{i=0}^m \frac{\alpha}{m}(h_i - y_i)\vec{x^i}$$
-gdje je j redni broj iteracije, a m je broj mjerenja. Parametar $\alpha$
+iterativno pravilo za učenje jednog neurona:\
+<img src="https://raw.githubusercontent.com/termistotel/microbitML/readmeAssets/imgs/jednadbe/treca.png">\
+gdje je j redni broj iteracije, a m je broj mjerenja. Parametar α
 se zove *learning rate* ili faktor učenja. Iteraciju ponavljamo sve dok
-razlike ne postanu dovoljno male:
-$$| \vec{\theta}_{j} - \vec{\theta}_{j+1} | < \eta$$ Da bismo na ovaj
-način ostvarili učenje, moramo zadati dva parametra: $\alpha$ i $\eta$.
-Faktor učenja, $\alpha$, može jako varirati ovisno o načinu učenja i
+razlike ne postanu dovoljno male:\
+<img src="https://raw.githubusercontent.com/termistotel/microbitML/readmeAssets/imgs/jednadbe/cetvrta.png">\
+Da bismo na ovaj
+način ostvarili učenje, moramo zadati dva parametra: α i η.
+Faktor učenja, α, može jako varirati ovisno o načinu učenja i
 nemožemo na jednostavan način unaprijed znati koliko bi trebao iznositi.
 Ako ga zadamo previsokog, učenje nam neće nikada konvergirati, ali ako
 je prenizak, učenje će biti presporo. Najbolji pristup zadavanju tih
@@ -309,15 +293,16 @@ skaliranje
 ----------
 
 Ako isprobamo gornji algoritam za učenje na spremljenim podacima,
-primjetili bismo da je jako teško naštimati parametre $\alpha$ i $\eta$
+primjetili bismo da je jako teško naštimati parametre α i η
 za dobru konvergenciju. To se događa jer nam različiti stupci poprimaju
 jako različite vrijednosti.\
 Da bismo riješili taj problem, trebamo primjeniti osnovno
 pret-procesiranje podataka za treniranje. To ćemo postići skaliranjem.\
-Za svaki stupac nađemo srednju vrijednost $\mu$ i standardnu deviaciju
-$\sigma$. Nakon toga, od svake vrijednosti u tom stupcu oduzmemo srednju
-vrijednost i podijelimo sa standardnom deviaijom:
-$$x_{novi} = \frac{x_{stari} - \mu}{2\sigma}$$ Time smo postigli da nam
+Za svaki stupac nađemo srednju vrijednost i standardnu deviaciju
+σ. Nakon toga, od svake vrijednosti u tom stupcu oduzmemo srednju
+vrijednost i podijelimo sa standardnom deviaijom:\
+<img src="https://raw.githubusercontent.com/termistotel/microbitML/readmeAssets/imgs/jednadbe/peta.png">\
+Time smo postigli da nam
 podaci u svakom stupcu postižu vrijednosti otprilike između -1 i 1.
 Nakon toga će lakše biti naštimati parametre učenja.
 
@@ -327,7 +312,7 @@ prepoznavanje
 Ako pokrenemo learn.py, neuron će početi učiti iz podataka za
 treniranje. Kada je učenje završeno, pokrenut će server koji čeka nove
 podatke sa uređaja. Za svako primljeno mjerenje će izračunati
-predviđanje $h$, te ako je veći od 0.5 ga ispiše na zaslon.\
+predviđanje h, te ako je veći od 0.5 ga ispiše na zaslon.\
 Kada krenemo trčati, neuron bi to trebao detektirati kao pozitivno
 mjerenje i ispisati.
 
