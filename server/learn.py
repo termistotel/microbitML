@@ -63,6 +63,45 @@ def skala(X):
 def skaliraj(X,mean,sigma):
 	return np.divide((X -mean),sigma)
 
+#funkcija za drugacije oblikovanj podataka, nepotrebna i nekoristena
+def oblikujPodatke(X,y,uzastopni):
+       #u X1 i y1 spremamo nove, oblikovane podatke za treniranje
+       y1=np.array([])
+       X1 = np.empty(shape=(0,4*uzastopni+1))
+
+       #Dodajemo pozitivnu klasu y = 1
+       indeksi,=np.where(y==1)
+       broj = len(indeksi) #broj mjerenja s y = 1
+       indeksi2 = np.zeros(shape=(broj,uzastopni),dtype='int32')
+
+       #Spremamo indekse okolnih mjerenja koje cemo poslije spojiti u oblik podataka za treniranje
+       for i in range(uzastopni):
+               indeksi2[:,i] = indeksi-2+i
+
+       for red in indeksi2:
+               odabrani = X[red,:].ravel()
+               #dodajemo x0 = 1 na pocetak novih podataka
+               mjerenje = np.append([1],odabrani)
+               X1 = np.append(X1,[mjerenje],axis=0)
+               y1 = np.append(y1,[1])
+
+       #Brisemo sva mjerenja koja smo uzeli kao pozitivnu klasu
+       X = np.delete(X,indeksi2.ravel(),0)
+
+       #Dodajemo negativnu klasu y = 0, dodajemo isti broj mjerenja koji imamo za pozitivnu klasu
+       for i in range(broj):
+               #Za negativnu klasu uzimamo nasumicno odabrana mjerenja iz preostalih
+               centralniIndeks = randint(uzastopni//2,len(X)-uzastopni//2 - 2)
+               indeksi=np.array(range(uzastopni))-uzastopni//2 + centralniIndeks
+
+               odabrani = X[indeksi,:].ravel()
+               mjerenje = np.append([1],odabrani)
+               X1 = np.append(X1,[mjerenje],axis=0)
+               y1 = np.append(y1,[0])
+       
+       return X1,y1
+
+
 #funkcija koja vraca true ako je resurs od servera iskoristen, a false ako je proslo odredeno vrijeme
 def resBusy(res,timeout):
 	i,_,_ = select([res],[],[],timeout)
